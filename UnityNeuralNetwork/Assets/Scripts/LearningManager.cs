@@ -21,6 +21,8 @@ public class LearningManager : MonoBehaviour
     
     [Header("Neural Network Configuration")]
     public int HiddenLayersCount = 3;
+    public float WeightsInitialValue = 0.5f;
+    public float BiasesInitialValue = 0.5f;
 
     private int _inputNeuronsCount; // количество входов - лучи лазерного дальномера агентов, по 5 на агента
     private int _hiddenLayerNeuronCount; // нейроны в скрытых слоях
@@ -45,8 +47,8 @@ public class LearningManager : MonoBehaviour
             LearningAreaManager areaManager = learningArea.GetComponent<LearningAreaManager>();
             
             NeuralNetwork neuralNetwork = new NeuralNetwork(
-                _inputNeuronsCount, _outputNeuronCount, 
-                _hiddenLayerNeuronCount, HiddenLayersCount
+                _inputNeuronsCount, _outputNeuronCount, _hiddenLayerNeuronCount, 
+                HiddenLayersCount, WeightsInitialValue, BiasesInitialValue
             );
             
             areaManager.Construct(neuralNetwork);
@@ -69,7 +71,7 @@ public class LearningManager : MonoBehaviour
             return;
 
 
-        ClearTracks();
+        EndLearningIteration();
         StartIteration();
     }
 
@@ -82,8 +84,12 @@ public class LearningManager : MonoBehaviour
         }
     }
 
-    private void ClearTracks()
+    private void EndLearningIteration()
     {
+        //отбор нейронок по максимальной функциии
+        //скрещивание путем обмена половинами
+        //мутация весов и байосов
+        
         foreach (LearningAreaManager areaManager in _areaManagers)
         {
             areaManager.CleanUp();
