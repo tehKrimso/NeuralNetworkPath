@@ -27,9 +27,11 @@ public class Agent : MonoBehaviour
             Ray Ray = new Ray(transform.position, newVector);
 
 
-            if (Physics.Raycast(Ray, out hit, 10, raycastMask))
+            int raycastDistance = 10;
+            
+            if (Physics.Raycast(Ray, out hit, raycastDistance, raycastMask))
             {
-                input[i] = (10 - hit.distance) / 10; //return distance, 1 being close
+                input[i] = (raycastDistance - hit.distance) / raycastDistance; //return distance, 1 being close
             }
             else
             {
@@ -88,9 +90,9 @@ public class Agent : MonoBehaviour
     {
         if (collided)
             return;
-        
-        
-        transform.Rotate(0, angularMove * rotation, 0, Space.World); //controls the cars movement
-        transform.position += -transform.forward * linearMove * speed; //controls the cars turning
+
+
+        transform.position += transform.forward * linearMove * speed; //controls turning
+        transform.Rotate(0, angularMove * rotation, 0, Space.World); //controls movement
     }
 }

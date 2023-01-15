@@ -37,8 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,11 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!108 &170076734 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 602266129744100421, guid: 9bad5b1da60e87f4a9fde8f4c1d0e019, type: 3}
-  m_PrefabInstance: {fileID: 602266129842722427}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,14 +251,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UsePresavedData: 0
-  LearningAreaCount: 1
-  AgentsInGroupCount: 5
-  IterationTime: 15
+  LearningAreaCount: 200
+  AgentsInGroupCount: 3
+  IterationTime: 10
+  SavePath: Assets/SavedData.txt
   ArenaPrefab: {fileID: 602266130759669455, guid: 9bad5b1da60e87f4a9fde8f4c1d0e019, type: 3}
   AgentPrefab: {fileID: 1532731473219079339, guid: 07012ce5e19fa52459566d2bb3cf6eb9, type: 3}
-  MutationChance: 0.01
-  MutationDelta: 0.5
-  HiddenLayersCount: 3
+  MutationChance: 0.5
+  MutationDelta: 1
+  HiddenLayersCount: 4
   WeightsInitialValue: 0.5
   BiasesInitialValue: 0.5
 --- !u!4 &1233820431

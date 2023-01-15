@@ -448,7 +448,7 @@ MonoBehaviour:
   rotation: 6
   raycastMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 2103
   position: 0
   collided: 0
 --- !u!54 &6988533098850944150

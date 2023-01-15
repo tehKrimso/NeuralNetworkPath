@@ -92,17 +92,47 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         //
     }
 
+    //crossingover constructor
+    public NeuralNetwork(NeuralNetwork first, NeuralNetwork second)
+    {
+        var firstLayers = first.GetLayers();
+        var secondLayers = second.GetLayers();
+
+        var firstWeights = first.GetWeights();
+        var secondWeights = first.GetWeights();
+
+        var halfValue = firstLayers.Count / 2;
+        
+        _weights = new float[halfValue * 2-1][][];
+        
+        for(int i = 0; i<halfValue; i++)
+        {
+            _layers.Add(firstLayers[i]);
+            _weights[i] = firstWeights[i];
+        }
+        
+        for(int i = halfValue; i<halfValue*2; i++)
+        {
+            _layers.Add(secondLayers[i]);
+
+            //костыль
+            if (i == halfValue*2-1)
+                break;
+            //
+            _weights[i] = secondWeights[i];
+        }
+    }
+
     public void TrainingLoop()
     {
         
     }
 
+    public List<Neuron[]> GetLayers() => _layers;
+    public float[][][] GetWeights() => _weights;
+
     public void FeedForward(float[] inputs)
     {
-        //!!!!!!!
-        //Biases пока не участвуют !!!!!!!
-        //!!!!!!!
-        
         //выставлять значение напрявую в активацию, чтобы не пропускат ьинпуты через сигмоид???
         for (int i = 0; i < inputs.Length; i++)
         {
@@ -120,10 +150,14 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
                 float feedforwardValue = 0;
                 for (int k = 0; k < _layers[i - 1].Length; k++)//каждый нейрон в предыдущем слое
                 {
-                    feedforwardValue += _layers[i - 1][k].GetActivationValue() * _weights[i - 1][k][j];
+                    //feedforwardValue += _layers[i - 1][k].GetActivationValue() * _weights[i - 1][k][j];
+                    feedforwardValue += _layers[i - 1][k].GetValue() * _weights[i - 1][k][j];
                 }
+
+                float activationValue = _layers[i][j].Activation(feedforwardValue + _layers[i][j].GetBias());
                 
-                _layers[i][j].SetValue(feedforwardValue);
+                //_layers[i][j].SetValue(feedforwardValue);
+                _layers[i][j].SetValue(activationValue);
             }
         }
         
@@ -139,5 +173,71 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         }
 
         return outputs;
+    }
+
+    public void Mutate(float mutationChance, float mutationStrength)
+    {
+        //weights
+        for (int i = 0; i < _weights.Length; i++)
+        {
+            for (int j = 0; j < _weights[i].Length; j++)
+            {
+                for (int k = 0; k < _weights[i][j].Length; k++)
+                {
+                    //переписать на проверку с ифом
+                    _weights[i][j][k] = (UnityEngine.Random.Range(0f, 1f) <= mutationChance)
+                        ? _weights[i][j][k] += UnityEngine.Random.Range(-mutationStrength, mutationStrength)
+                        : _weights[i][j][k];
+                }
+            }
+        }
+        
+        //biases
+        foreach (Neuron[] layer in _layers)
+        {
+            foreach (Neuron neuron in layer)
+            {
+                if (UnityEngine.Random.Range(0f, 1f) <= mutationChance)
+                {
+                    neuron.SetBias(neuron.GetActivationValue() +
+                                   UnityEngine.Random.Range(-mutationStrength, mutationStrength));
+                }
+            }
+        }
+    }
+    
+    public void Save(string path)
+    {
+        File.Create(path).Close();
+        StreamWriter writer = new StreamWriter(path, true);
+
+        writer.WriteLine(Fitness); //количество пройденых чекпоинтов
+        writer.WriteLine(_layers.Count); //количество слоев
+        writer.WriteLine(_layers[0].Length); //количество входов
+        writer.WriteLine(_layers[1].Length); //количество нейронов в скрытом слое
+        writer.WriteLine(_layers[_layers.Count-1].Length); //количество выходов
+        
+        //веса
+        for (int i = 0; i < _weights.Length; i++)
+        {
+            for (int j = 0; j < _weights[i].Length; j++)
+            {
+                for (int k = 0; k < _weights[i][j].Length; k++)
+                {
+                    writer.WriteLine(_weights[i][j][k]);
+                }
+            }
+        }
+
+        //отклонения
+        foreach (Neuron[] layer in _layers)
+        {
+            foreach (Neuron neuron in layer)
+            {
+                writer.WriteLine(neuron.GetBias());
+            }
+        }
+
+        writer.Close();
     }
 }

@@ -24,10 +24,10 @@ public class LearningAreaManager : MonoBehaviour
         
         _network = neuralNetwork;
         
-        _outputs = new float[_agents.Count * 2];//изменить инициализацию
+        _outputs = new float[agentsCount * 2];//изменить инициализацию
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (_isLearning)
         {
@@ -61,10 +61,14 @@ public class LearningAreaManager : MonoBehaviour
         }
         //
 
+        //оценка
         int score = 0;
         for (int i = 0; i < _agents.Count; i++)
         {
             int agentScore = _agents[i].GetScore();
+
+            //score += agentScore;
+
             if (agentScore > score)
             {
                 score = agentScore;
@@ -92,7 +96,7 @@ public class LearningAreaManager : MonoBehaviour
     {
         for (int i = 0; i < _agentsCount; i++)
         {
-            GameObject agent = Instantiate(_agentPrefab, StartPositionMarker.position + new Vector3(i*1.1f,0,0), Quaternion.identity);
+            GameObject agent = Instantiate(_agentPrefab, StartPositionMarker.position + new Vector3(i*3f,0,0), Quaternion.identity);
             agent.transform.SetParent(StartPositionMarker);
             
             Agent agentController = agent.GetComponent<Agent>();

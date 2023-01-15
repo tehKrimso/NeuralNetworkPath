@@ -22,6 +22,8 @@ public class Neuron
     //public void SetWeight(float weight) => _weight = weight;
     public void SetBias(float biasValue) => _bias = biasValue;
     public void SetValue(float value) => _value = value;
-    public float GetActivationValue() => Activation(_value);
-    private float Activation(float value) => (float)Math.Tanh(value);
+    public float GetValue() => _value;
+    public float GetActivationValue() => Activation(_value + _bias);
+    public float GetBias() => _bias;
+    public float Activation(float value) => (float)Math.Tanh(value);
 }

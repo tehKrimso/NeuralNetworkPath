@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LearningManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class LearningManager : MonoBehaviour
     public int LearningAreaCount = 3;
     public int AgentsInGroupCount = 5;
     public float IterationTime = 15f; // time for one learning iteration before restart
+
+    public string SavePath = "Assets/SavedData.txt";
 
     public GameObject ArenaPrefab; //arena prefab
     public GameObject AgentPrefab; //robotic agent model prefab
@@ -31,10 +34,11 @@ public class LearningManager : MonoBehaviour
     
     private List<NeuralNetwork> _neuralNetworks = new List<NeuralNetwork>();
 
-    private List<LearningAreaManager> _areaManagers = new List<LearningAreaManager>(); 
+    private List<LearningAreaManager> _areaManagers = new List<LearningAreaManager>();
 
+    private bool _isTimerCounting;
+    
     private float _timer;
-
     private int _iterationCount;
     
     private void Start()
@@ -70,17 +74,21 @@ public class LearningManager : MonoBehaviour
 
     private void Update()
     {
-        _timer += Time.deltaTime;
+        if(_isTimerCounting)
+            _timer += Time.deltaTime;
+        
         if (IterationTime - _timer > 0)
             return;
 
-
+        _timer = 0;
+        
         EndLearningIteration();
         StartIteration();
     }
 
     private void StartIteration()
     {
+        _isTimerCounting = true;
         _iterationCount++;
         Debug.Log($"Iteration #{_iterationCount} started.");
         
@@ -93,17 +101,48 @@ public class LearningManager : MonoBehaviour
 
     private void EndLearningIteration()
     {
-        
+        _isTimerCounting = false;
         //отбор нейронок по максимальной функциии
         //скрещивание путем обмена половинами
         //мутация весов и байосов
+        var list = _neuralNetworks.OrderByDescending(x => x.Fitness).ToList();
         
-        foreach (LearningAreaManager areaManager in _areaManagers)
+        NeuralNetwork bestNetwork = list[0];
+        NeuralNetwork secondBestNetwork = list[1];
+        
+        bestNetwork.Save(SavePath);
+
+        //скрещиваю две лучших
+        for (int i = 0; i < _neuralNetworks.Count; i++)
         {
-            areaManager.CleanUp();
+            //_neuralNetworks[i] = new NeuralNetwork(bestNetwork, secondBestNetwork);
+            _neuralNetworks[i] = new NeuralNetwork(bestNetwork, bestNetwork);
         }
+
+        //мутация весов и отклонений
+        foreach (NeuralNetwork neuralNetwork in _neuralNetworks)
+        {
+            neuralNetwork.Mutate(MutationChance,MutationDelta);
+        }
+
+        for (int i = 0; i < _areaManagers.Count; i++)
+        {
+            _areaManagers[i].CleanUp();
+            _areaManagers[i].Construct(_neuralNetworks[i], AgentPrefab,AgentsInGroupCount);
+        }
+        
+        // foreach (LearningAreaManager areaManager in _areaManagers)
+        // {
+        //     areaManager.CleanUp();
+        // }
 
         _timer = 0;
         Debug.Log($"Iteration #{_iterationCount} ended.");
+    }
+
+    //должно быть здесь
+    private void SaveData(NeuralNetwork neuralNetwork)
+    {
+        
     }
 }
