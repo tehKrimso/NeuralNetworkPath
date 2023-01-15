@@ -11,6 +11,12 @@ public class Neuron
     //private float _weight;
     private float _bias;
 
+    public Neuron()
+    {
+        _inputs = new List<Neuron>();
+        _outputs = new List<Neuron>();
+    }
+    
     public void AddInput(Neuron formNeuron) => _inputs.Add(formNeuron);
     public void AddOutput(Neuron toNeuron) => _outputs.Add(toNeuron);
     //public void SetWeight(float weight) => _weight = weight;

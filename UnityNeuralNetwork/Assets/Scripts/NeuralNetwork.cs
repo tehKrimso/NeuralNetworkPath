@@ -73,7 +73,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         {
             for (int j = 0; j < _layers[i].Length; j++)//для кжадого нейрона на слое
             {
-                _weights[i][j] = new float[_layers[i + 1].Length - 1];
+                _weights[i][j] = new float[_layers[i + 1].Length];
                 
                 for (int k = 0; k < _layers[i + 1].Length; k++)//для каждого нейрона на следующем слое
                 {

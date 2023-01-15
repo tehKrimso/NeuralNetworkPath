@@ -6,6 +6,7 @@ public class LearningManager : MonoBehaviour
 {
     public bool UsePresavedData;//load presaved values flag
     
+    [Header("Main Params")] 
     public int LearningAreaCount = 3;
     public int AgentsInGroupCount = 5;
     public float IterationTime = 15f; // time for one learning iteration before restart
@@ -39,7 +40,7 @@ public class LearningManager : MonoBehaviour
         _inputNeuronsCount = AgentsInGroupCount * 5;
         _outputNeuronCount = AgentsInGroupCount * 2;
 
-        _hiddenLayerNeuronCount = _inputNeuronsCount = _outputNeuronCount;
+        _hiddenLayerNeuronCount = _inputNeuronsCount - _outputNeuronCount;
 
         for (int i = 0; i < LearningAreaCount; i++)
         {
