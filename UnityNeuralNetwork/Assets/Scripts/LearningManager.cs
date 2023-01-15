@@ -34,6 +34,8 @@ public class LearningManager : MonoBehaviour
     private List<LearningAreaManager> _areaManagers = new List<LearningAreaManager>(); 
 
     private float _timer;
+
+    private int _iterationCount;
     
     private void Start()
     {
@@ -44,7 +46,7 @@ public class LearningManager : MonoBehaviour
 
         for (int i = 0; i < LearningAreaCount; i++)
         {
-            GameObject learningArea = Instantiate(ArenaPrefab, new Vector3(50 * i, 0, 0), Quaternion.identity);
+            GameObject learningArea = Instantiate(ArenaPrefab, new Vector3(50 * i, 0, 0), Quaternion.Euler(-90,0,0));
             LearningAreaManager areaManager = learningArea.GetComponent<LearningAreaManager>();
             
             NeuralNetwork neuralNetwork = new NeuralNetwork(
@@ -52,7 +54,7 @@ public class LearningManager : MonoBehaviour
                 HiddenLayersCount, WeightsInitialValue, BiasesInitialValue
             );
             
-            areaManager.Construct(neuralNetwork);
+            areaManager.Construct(neuralNetwork, AgentPrefab,AgentsInGroupCount);
             
             _neuralNetworks.Add(neuralNetwork);
             _areaManagers.Add(areaManager);
@@ -61,6 +63,7 @@ public class LearningManager : MonoBehaviour
         //
         //дополнительные инициализации
         //
+        
         StartIteration();
 
     }
@@ -78,6 +81,9 @@ public class LearningManager : MonoBehaviour
 
     private void StartIteration()
     {
+        _iterationCount++;
+        Debug.Log($"Iteration #{_iterationCount} started.");
+        
         foreach (LearningAreaManager areaManager in _areaManagers)
         {
             areaManager.SpawnAgents();
@@ -87,6 +93,7 @@ public class LearningManager : MonoBehaviour
 
     private void EndLearningIteration()
     {
+        
         //отбор нейронок по максимальной функциии
         //скрещивание путем обмена половинами
         //мутация весов и байосов
@@ -95,5 +102,8 @@ public class LearningManager : MonoBehaviour
         {
             areaManager.CleanUp();
         }
+
+        _timer = 0;
+        Debug.Log($"Iteration #{_iterationCount} ended.");
     }
 }

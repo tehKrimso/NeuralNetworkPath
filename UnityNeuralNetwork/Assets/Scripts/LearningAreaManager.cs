@@ -6,20 +6,28 @@ using UnityEngine;
 
 public class LearningAreaManager : MonoBehaviour
 {
+    public Transform StartPositionMarker;
+
+    private GameObject _agentPrefab;
+    private int _agentsCount;
+    
     private bool _isLearning;
     private NeuralNetwork _network;
     private List<Agent> _agents = new List<Agent>();//список агентов в одной системе
 
     private float[] _outputs;
 
-    public void Construct(NeuralNetwork neuralNetwork)
+    public void Construct(NeuralNetwork neuralNetwork, GameObject agentPrefab, int agentsCount)
     {
+        _agentPrefab = agentPrefab;
+        _agentsCount = agentsCount;
+        
         _network = neuralNetwork;
         
         _outputs = new float[_agents.Count * 2];//изменить инициализацию
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (_isLearning)
         {
@@ -52,22 +60,49 @@ public class LearningAreaManager : MonoBehaviour
             }
         }
         //
+
+        int score = 0;
+        for (int i = 0; i < _agents.Count; i++)
+        {
+            int agentScore = _agents[i].GetScore();
+            if (agentScore > score)
+            {
+                score = agentScore;
+            }
+        }
+        
+        //проверять, что новая оценка больше текущей?
+        _network.Fitness = score;
     }
 
     public void CleanUp()//очистка треков от агентов и ресчет точек интереса
     {
-        throw new System.NotImplementedException();
         _isLearning = false;
+
+        for (int i = 0; i < _agents.Count; i++)
+        {
+            Agent agent = _agents[i];
+            Destroy(agent.gameObject);
+        }
+        
+        _agents.Clear();
     }
 
     public void SpawnAgents() // спавн агентов в стартовой позиции
     {
-        throw new System.NotImplementedException();
+        for (int i = 0; i < _agentsCount; i++)
+        {
+            GameObject agent = Instantiate(_agentPrefab, StartPositionMarker.position + new Vector3(i*1.1f,0,0), Quaternion.identity);
+            agent.transform.SetParent(StartPositionMarker);
+            
+            Agent agentController = agent.GetComponent<Agent>();
+            agentController.network = _network;
+            _agents.Add(agentController);
+        }
     }
 
     public void StartLearning()//установка флага
     {
-        throw new System.NotImplementedException();
         _isLearning = true;
     }
 }
