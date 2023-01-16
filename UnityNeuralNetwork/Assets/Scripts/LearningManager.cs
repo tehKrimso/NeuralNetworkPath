@@ -43,7 +43,8 @@ public class LearningManager : MonoBehaviour
     
     private void Start()
     {
-        _inputNeuronsCount = AgentsInGroupCount * 5;
+        //_inputNeuronsCount = AgentsInGroupCount * 5;
+        _inputNeuronsCount = AgentsInGroupCount * 8;
         _outputNeuronCount = AgentsInGroupCount * 2;
 
         _hiddenLayerNeuronCount = _inputNeuronsCount - _outputNeuronCount;
@@ -69,7 +70,23 @@ public class LearningManager : MonoBehaviour
         //
         
         StartIteration();
+        
+        //InvokeRepeating("Test", 0.1f, IterationTime);
 
+    }
+
+    private void Test()
+    {
+        EndLearningIteration();
+        
+        _iterationCount++;
+        Debug.Log($"Iteration #{_iterationCount} started.");
+        
+        foreach (LearningAreaManager areaManager in _areaManagers)
+        {
+            areaManager.SpawnAgents();
+            areaManager.StartLearning();
+        }
     }
 
     private void Update()
@@ -159,7 +176,10 @@ public class LearningManager : MonoBehaviour
             HiddenLayersCount, WeightsInitialValue, BiasesInitialValue
         );
 
-        for (int i = 0; i < newNetwork.weights.Length; i++)
+
+        var halfValue =  newNetwork.weights.Length / 2;
+        
+        for (int i = 0; i < halfValue + 1; i++)
         {
             for (int j = 0; j < newNetwork.weights[i].Length; j++)
             {
@@ -169,8 +189,21 @@ public class LearningManager : MonoBehaviour
                 }
             }
         }
+        
+        for (int i = halfValue+1; i < newNetwork.weights.Length; i++)
+        {
+            for (int j = 0; j < newNetwork.weights[i].Length; j++)
+            {
+                for (int k = 0; k < newNetwork.weights[i][j].Length; k++)
+                {
+                    newNetwork.weights[i][j][k] = second.weights[i][j][k];
+                }
+            }
+        }
 
         var firstLayers = first.GetLayers();
+        var secondLayers = second.GetLayers();
+        
         var newLayers = newNetwork.GetLayers();
 
         for (int i = 0; i < newLayers.Count; i++)

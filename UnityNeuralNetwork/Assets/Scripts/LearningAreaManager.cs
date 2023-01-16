@@ -84,7 +84,7 @@ public class LearningAreaManager : MonoBehaviour
     {
         for (int i = 0; i < _agentsCount; i++)
         {
-            GameObject agent = Instantiate(_agentPrefab, StartPositionMarker.position + new Vector3(i*3f,0,0), Quaternion.identity);
+            GameObject agent = Instantiate(_agentPrefab, StartPositionMarker.position + new Vector3(i*3f,0,0), Quaternion.Euler(0,90,0));
             agent.transform.SetParent(StartPositionMarker);
             
             Agent agentController = agent.GetComponent<Agent>();

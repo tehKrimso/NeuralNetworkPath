@@ -8,6 +8,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     private Neuron[][] _hiddenLayers;
     private Neuron[] _outputLayer;
     private float[] _newBiases;
+    public float Fitness = 0; //fitness
 
     //сделать слои не тремя массивами а List<Neuron[]>?
     //

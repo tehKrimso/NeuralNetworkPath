@@ -10,7 +10,7 @@ public class Agent : MonoBehaviour
 
     public NeuralNetwork network;
     
-    private float[] input = new float[5]; //input to the neural network
+    private float[] input = new float[8]; //input to the neural network
 
     public int position; //Checkpoint number on the course
     public bool collided; //To tell if the car has crashed
@@ -18,7 +18,7 @@ public class Agent : MonoBehaviour
     private List<GameObject> _checkpointList = new List<GameObject>();
     private void DrawLidar()
     {
-        for (int i = 0; i < 5; i++) //draws five debug rays as inputs
+        for (int i = 0; i < 8; i++) //draws five debug rays as inputs
         {
             Vector3 newVector =
                 Quaternion.AngleAxis(i * 45 - 90, new Vector3(0, 1, 0)) *
@@ -48,6 +48,12 @@ public class Agent : MonoBehaviour
         if (other.CompareTag("Checkpoint") && !_checkpointList.Contains(other.gameObject))
         {
             _checkpointList.Add(other.gameObject);
+            
+            //костыль
+            if(other.gameObject.name == "CheckPoint (43)" && _checkpointList.Count > 43)
+                _checkpointList.Clear();
+            //
+            
             position++;
         }
     }
@@ -92,7 +98,7 @@ public class Agent : MonoBehaviour
             return;
 
 
-        transform.position += transform.forward * linearMove * speed; //controls turning
         transform.Rotate(0, angularMove * rotation, 0, Space.World); //controls movement
+        transform.position += -transform.forward * linearMove * speed; //controls turning
     }
 }
