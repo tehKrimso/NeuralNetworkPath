@@ -54,10 +54,11 @@ public class LearningAreaManager : MonoBehaviour
         //отправка выходных значений агентам
         for (int i = 0; i < _outputs.Length; i += 2)
         {
-            for (int j = 0; j < _agents.Count; j++)
-            {
-                _agents[j].SetMoveValues(_outputs[i], _outputs[i + 1]);//движение агентов вызывать отсюда же
-            }
+            // for (int j = 0; j < _agents.Count; j++)
+            // {
+            //     _agents[j].SetMoveValues(_outputs[i], _outputs[i + 1]);//движение агентов вызывать отсюда же
+            // }
+            _agents[i/2].SetMoveValues(_outputs[i],_outputs[i+1]);
         }
         //
 
@@ -79,19 +80,6 @@ public class LearningAreaManager : MonoBehaviour
         _network.Fitness = score;
     }
 
-    public void CleanUp()//очистка треков от агентов и ресчет точек интереса
-    {
-        _isLearning = false;
-
-        for (int i = 0; i < _agents.Count; i++)
-        {
-            Agent agent = _agents[i];
-            Destroy(agent.gameObject);
-        }
-        
-        _agents.Clear();
-    }
-
     public void SpawnAgents() // спавн агентов в стартовой позиции
     {
         for (int i = 0; i < _agentsCount; i++)
@@ -108,5 +96,18 @@ public class LearningAreaManager : MonoBehaviour
     public void StartLearning()//установка флага
     {
         _isLearning = true;
+    }
+
+    public void CleanUp()//очистка треков от агентов и ресчет точек интереса
+    {
+        _isLearning = false;
+
+        for (int i = 0; i < _agents.Count; i++)
+        {
+            Agent agent = _agents[i];
+            Destroy(agent.gameObject);
+        }
+        
+        _agents.Clear();
     }
 }

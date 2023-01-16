@@ -14,7 +14,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     private List<Neuron[]> _layers = new List<Neuron[]>();
     
     //
-    private float[][][] _weights; //вес для каждого слоя на связи ВЫХОДЯЩЕЙ из нейрона на слое
+    public float[][][] weights; //вес для каждого слоя на связи ВЫХОДЯЩЕЙ из нейрона на слое
                                   //индексы слой/нейрон на слое/нейрона на следующем слое
                                 //[1][1][1] -> вес связи между 1-м нейроном на 1-ом слое и 1-м нейроном на следующем слое
     //
@@ -25,7 +25,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         //TODO refactor
 
         //layers init
-        _weights = new float[1 + hiddenLayerCount][][];
+        weights = new float[1 + hiddenLayerCount][][];
         
         //input
         Neuron[] inputLayer = new Neuron[inputCount];
@@ -36,7 +36,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
             inputLayer[i].SetBias(UnityEngine.Random.Range(-initialBiasesValue, initialBiasesValue));
         }
 
-        _weights[0] = new float[inputCount][];
+        weights[0] = new float[inputCount][];
         _layers.Add(inputLayer);
         
         //hidden layers
@@ -50,7 +50,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
                 hiddenLayer[j].SetBias(UnityEngine.Random.Range(-initialBiasesValue, initialBiasesValue));
             }
 
-            _weights[i + 1] = new float[hiddenLayerNeuronsCount][];
+            weights[i + 1] = new float[hiddenLayerNeuronsCount][];
             
             _layers.Add(hiddenLayer);
         }
@@ -73,13 +73,13 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         {
             for (int j = 0; j < _layers[i].Length; j++)//для кжадого нейрона на слое
             {
-                _weights[i][j] = new float[_layers[i + 1].Length];
+                weights[i][j] = new float[_layers[i + 1].Length];
                 
                 for (int k = 0; k < _layers[i + 1].Length; k++)//для каждого нейрона на следующем слое
                 {
                     _layers[i][j].AddOutput(_layers[i+1][k]);
                     _layers[i+1][k].AddInput(_layers[i][j]);
-                    _weights[i][j][k] = UnityEngine.Random.Range(-initialWeightsValue, initialWeightsValue);
+                    weights[i][j][k] = UnityEngine.Random.Range(-initialWeightsValue, initialWeightsValue);
                 }
                 
                 // foreach (Neuron nextLayerNeuron in _layers[i+1])
@@ -103,12 +103,12 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
 
         var halfValue = firstLayers.Count / 2;
         
-        _weights = new float[halfValue * 2-1][][];
+        weights = new float[halfValue * 2-1][][];
         
         for(int i = 0; i<halfValue; i++)
         {
             _layers.Add(firstLayers[i]);
-            _weights[i] = firstWeights[i];
+            weights[i] = firstWeights[i];
         }
         
         for(int i = halfValue; i<halfValue*2; i++)
@@ -119,7 +119,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
             if (i == halfValue*2-1)
                 break;
             //
-            _weights[i] = secondWeights[i];
+            weights[i] = secondWeights[i];
         }
     }
 
@@ -129,7 +129,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     }
 
     public List<Neuron[]> GetLayers() => _layers;
-    public float[][][] GetWeights() => _weights;
+    public float[][][] GetWeights() => weights;
 
     public void FeedForward(float[] inputs)
     {
@@ -151,7 +151,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
                 for (int k = 0; k < _layers[i - 1].Length; k++)//каждый нейрон в предыдущем слое
                 {
                     //feedforwardValue += _layers[i - 1][k].GetActivationValue() * _weights[i - 1][k][j];
-                    feedforwardValue += _layers[i - 1][k].GetValue() * _weights[i - 1][k][j];
+                    feedforwardValue += _layers[i - 1][k].GetValue() * weights[i - 1][k][j];
                 }
 
                 float activationValue = _layers[i][j].Activation(feedforwardValue + _layers[i][j].GetBias());
@@ -169,7 +169,8 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         
         for (int i = 0; i < outputs.Length; i++)
         {
-            outputs[i] = _layers[_layers.Count - 1][i].GetActivationValue();
+            //outputs[i] = _layers[_layers.Count - 1][i].GetActivationValue();
+            outputs[i] = _layers[_layers.Count - 1][i].GetValue();
         }
 
         return outputs;
@@ -178,16 +179,16 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     public void Mutate(float mutationChance, float mutationStrength)
     {
         //weights
-        for (int i = 0; i < _weights.Length; i++)
+        for (int i = 0; i < weights.Length; i++)
         {
-            for (int j = 0; j < _weights[i].Length; j++)
+            for (int j = 0; j < weights[i].Length; j++)
             {
-                for (int k = 0; k < _weights[i][j].Length; k++)
+                for (int k = 0; k < weights[i][j].Length; k++)
                 {
                     //переписать на проверку с ифом
-                    _weights[i][j][k] = (UnityEngine.Random.Range(0f, 1f) <= mutationChance)
-                        ? _weights[i][j][k] += UnityEngine.Random.Range(-mutationStrength, mutationStrength)
-                        : _weights[i][j][k];
+                    weights[i][j][k] = (UnityEngine.Random.Range(0f, 1f) <= mutationChance)
+                        ? weights[i][j][k] += UnityEngine.Random.Range(-mutationStrength, mutationStrength)
+                        : weights[i][j][k];
                 }
             }
         }
@@ -218,13 +219,13 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
         writer.WriteLine(_layers[_layers.Count-1].Length); //количество выходов
         
         //веса
-        for (int i = 0; i < _weights.Length; i++)
+        for (int i = 0; i < weights.Length; i++)
         {
-            for (int j = 0; j < _weights[i].Length; j++)
+            for (int j = 0; j < weights[i].Length; j++)
             {
-                for (int k = 0; k < _weights[i][j].Length; k++)
+                for (int k = 0; k < weights[i][j].Length; k++)
                 {
-                    writer.WriteLine(_weights[i][j][k]);
+                    writer.WriteLine(weights[i][j][k]);
                 }
             }
         }

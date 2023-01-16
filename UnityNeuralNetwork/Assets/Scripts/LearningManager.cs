@@ -105,6 +105,13 @@ public class LearningManager : MonoBehaviour
         //отбор нейронок по максимальной функциии
         //скрещивание путем обмена половинами
         //мутация весов и байосов
+        
+        for (int i = 0; i < _areaManagers.Count; i++)
+        {
+            _areaManagers[i].CleanUp();
+        }
+        
+        
         var list = _neuralNetworks.OrderByDescending(x => x.Fitness).ToList();
         
         NeuralNetwork bestNetwork = list[0];
@@ -116,7 +123,7 @@ public class LearningManager : MonoBehaviour
         for (int i = 0; i < _neuralNetworks.Count; i++)
         {
             //_neuralNetworks[i] = new NeuralNetwork(bestNetwork, secondBestNetwork);
-            _neuralNetworks[i] = new NeuralNetwork(bestNetwork, bestNetwork);
+            _neuralNetworks[i] = CrossNetworks(bestNetwork, bestNetwork);
         }
 
         //мутация весов и отклонений
@@ -127,7 +134,6 @@ public class LearningManager : MonoBehaviour
 
         for (int i = 0; i < _areaManagers.Count; i++)
         {
-            _areaManagers[i].CleanUp();
             _areaManagers[i].Construct(_neuralNetworks[i], AgentPrefab,AgentsInGroupCount);
         }
         
@@ -144,5 +150,37 @@ public class LearningManager : MonoBehaviour
     private void SaveData(NeuralNetwork neuralNetwork)
     {
         
+    }
+
+    private NeuralNetwork CrossNetworks(NeuralNetwork first, NeuralNetwork second)
+    {
+        NeuralNetwork newNetwork = new NeuralNetwork(
+            _inputNeuronsCount, _outputNeuronCount, _hiddenLayerNeuronCount, 
+            HiddenLayersCount, WeightsInitialValue, BiasesInitialValue
+        );
+
+        for (int i = 0; i < newNetwork.weights.Length; i++)
+        {
+            for (int j = 0; j < newNetwork.weights[i].Length; j++)
+            {
+                for (int k = 0; k < newNetwork.weights[i][j].Length; k++)
+                {
+                    newNetwork.weights[i][j][k] = first.weights[i][j][k];
+                }
+            }
+        }
+
+        var firstLayers = first.GetLayers();
+        var newLayers = newNetwork.GetLayers();
+
+        for (int i = 0; i < newLayers.Count; i++)
+        {
+            for (int j = 0; j < newLayers[i].Length; j++)
+            {
+                newLayers[i][j].SetBias(firstLayers[i][j].GetBias());
+            }
+        }
+
+        return newNetwork;
     }
 }
