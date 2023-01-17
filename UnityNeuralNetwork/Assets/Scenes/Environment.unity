@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d4cdf91ba20a5429545f8bc96232e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TimeScale: 1
+  TimeScale: 20
 --- !u!114 &1233820430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +389,7 @@ MonoBehaviour:
   AgentsInGroupCount: 1
   IterationTime: 15
   SavePath: Assets/SavedData.txt
-  ArenaPrefab: {fileID: 602266130759669455, guid: 9b4e751951798e24e8720940fdb0c65b, type: 3}
+  ArenaPrefab: {fileID: 602266130759669455, guid: 9bad5b1da60e87f4a9fde8f4c1d0e019, type: 3}
   AgentPrefab: {fileID: 1532731473219079339, guid: 07012ce5e19fa52459566d2bb3cf6eb9, type: 3}
   MutationChance: 0.1
   MutationDelta: 0.5
@@ -409,7 +409,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &602266129842722427
 PrefabInstance:
@@ -472,55 +472,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bad5b1da60e87f4a9fde8f4c1d0e019, type: 3}
---- !u!4 &5456837006449710320
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5456837006449710326}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5456837006449710326
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5456837006449710320}
-  - component: {fileID: 5456837006449710327}
-  m_Layer: 0
-  m_Name: Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &5456837006449710327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5456837006449710326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e752c222ff6140708f2aedd06764457d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeframe: 15
-  populationSize: 50
-  prefab: {fileID: 1532731473219079339, guid: 07012ce5e19fa52459566d2bb3cf6eb9, type: 3}
-  UsePresavedData: 0
-  layers: 050000000300000002000000
-  MutationChance: 0.05
-  MutationStrength: 0.5
-  Gamespeed: 1
