@@ -10,6 +10,8 @@ public class LearningAreaManager : MonoBehaviour
 
     private GameObject _agentPrefab;
     private int _agentsCount;
+
+    private bool _useSavedData;
     
     private bool _isLearning;
     private NeuralNetwork _network;
@@ -17,18 +19,28 @@ public class LearningAreaManager : MonoBehaviour
 
     private float[] _outputs;
 
-    public void Construct(NeuralNetwork neuralNetwork, GameObject agentPrefab, int agentsCount)
+    public void Construct(NeuralNetwork neuralNetwork, GameObject agentPrefab, int agentsCount, bool useSavedData = false)
     {
+        _useSavedData = useSavedData;
+        
         _agentPrefab = agentPrefab;
         _agentsCount = agentsCount;
         
         _network = neuralNetwork;
         
         _outputs = new float[agentsCount * 2];//изменить инициализацию
+        
+        
     }
 
     private void Update()
     {
+        if (_useSavedData)
+        {
+            NetworkLoop();
+            return;
+        }
+        
         if (_isLearning)
         {
             ExecuteNetworkLoop();//собираем инпуты с агентов и отправляем в нейронку
@@ -37,30 +49,7 @@ public class LearningAreaManager : MonoBehaviour
 
     private void ExecuteNetworkLoop()
     {
-        //сбор инпутов
-        List<float> inputs = new List<float>();//константу вынести
-        foreach (Agent agent in _agents)
-        {
-            float[] agentSensorData = agent.GetSensorData();//Прописать метод
-            inputs.AddRange(agentSensorData);
-        }
-        //
-        
-        //отправка инпутов в сеть и получение выходных значение
-        _network.FeedForward(inputs.ToArray());//отправляем данные с сенсоров на вход сети
-        _outputs = _network.GetOutputs();
-        //
-        
-        //отправка выходных значений агентам
-        for (int i = 0; i < _outputs.Length; i += 2)
-        {
-            // for (int j = 0; j < _agents.Count; j++)
-            // {
-            //     _agents[j].SetMoveValues(_outputs[i], _outputs[i + 1]);//движение агентов вызывать отсюда же
-            // }
-            _agents[i/2].SetMoveValues(_outputs[i],_outputs[i+1]);
-        }
-        //
+        NetworkLoop();
 
         //оценка
         int score = 0;
@@ -78,6 +67,34 @@ public class LearningAreaManager : MonoBehaviour
         
         //проверять, что новая оценка больше текущей?
         _network.Fitness = score;
+    }
+
+    private void NetworkLoop()
+    {
+        //сбор инпутов сделать отдельным методом
+        List<float> inputs = new List<float>(); //константу вынести
+        foreach (Agent agent in _agents)
+        {
+            float[] agentSensorData = agent.GetSensorData(); //Прописать метод
+            inputs.AddRange(agentSensorData);
+        }
+        //
+
+        //отправка инпутов в сеть и получение выходных значение
+        _network.FeedForward(inputs.ToArray()); //отправляем данные с сенсоров на вход сети
+        _outputs = _network.GetOutputs();
+        //
+
+        //отправка выходных значений агентам
+        for (int i = 0; i < _outputs.Length; i += 2)
+        {
+            // for (int j = 0; j < _agents.Count; j++)
+            // {
+            //     _agents[j].SetMoveValues(_outputs[i], _outputs[i + 1]);//движение агентов вызывать отсюда же
+            // }
+            _agents[i / 2].SetMoveValues(_outputs[i], _outputs[i + 1]);
+        }
+        //
     }
 
     public void SpawnAgents() // спавн агентов в стартовой позиции

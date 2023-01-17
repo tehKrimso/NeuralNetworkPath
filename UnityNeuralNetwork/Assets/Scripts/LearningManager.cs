@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Windows;
+using File = System.IO.File;
 
 public class LearningManager : MonoBehaviour
 {
     public bool UsePresavedData;//load presaved values flag
+    
     
     [Header("Main Params")] 
     public int LearningAreaCount = 3;
@@ -43,6 +47,55 @@ public class LearningManager : MonoBehaviour
     
     private void Start()
     {
+        if (UsePresavedData)
+        {
+            string[] data = LoadData(SavePath);
+
+            int inputCount = Convert.ToInt32(data[2]);
+            int outputCount = Convert.ToInt32(data[4]);
+            int hiddenLayerNeuronCount = Convert.ToInt32(data[3]);
+            int hiddenLayerCount = Convert.ToInt32(data[1]) - 2;
+
+
+            NeuralNetwork neuralNetwork = new NeuralNetwork(inputCount, outputCount, hiddenLayerNeuronCount,
+                hiddenLayerCount, WeightsInitialValue, BiasesInitialValue);
+
+
+            int currentDataIndex = 5;
+            
+            for (int i = 0; i < neuralNetwork.weights.Length; i++)
+            {
+                for (int j = 0; j < neuralNetwork.weights[i].Length; j++)
+                {
+                    for (int k = 0; k < neuralNetwork.weights[i][j].Length; k++)
+                    {
+                        neuralNetwork.weights[i][j][k] = Convert.ToSingle(data[currentDataIndex]);
+                        currentDataIndex++;
+                    }
+                }
+            }
+
+            var layers = neuralNetwork.GetLayers();
+            
+            for (int i = 0; i < layers.Count; i++)
+            {
+                for (int j = 0; j < layers[i].Length; j++)
+                {
+                    layers[i][j].SetBias(Convert.ToSingle(data[currentDataIndex]));
+                    currentDataIndex++;
+                }
+            }
+            
+            GameObject learningArea = Instantiate(ArenaPrefab, new Vector3(0, 0, 0), Quaternion.Euler(-90,0,0));
+            LearningAreaManager areaManager = learningArea.GetComponent<LearningAreaManager>();
+            areaManager.Construct(neuralNetwork, AgentPrefab,AgentsInGroupCount, true);
+            areaManager.SpawnAgents();
+
+
+            return;
+        }
+        
+        
         //_inputNeuronsCount = AgentsInGroupCount * 5;
         _inputNeuronsCount = AgentsInGroupCount * 8;
         _outputNeuronCount = AgentsInGroupCount * 2;
@@ -167,6 +220,11 @@ public class LearningManager : MonoBehaviour
     private void SaveData(NeuralNetwork neuralNetwork)
     {
         
+    }
+
+    private string[] LoadData(string path)
+    {
+        return File.ReadAllLines(path);
     }
 
     private NeuralNetwork CrossNetworks(NeuralNetwork first, NeuralNetwork second)
