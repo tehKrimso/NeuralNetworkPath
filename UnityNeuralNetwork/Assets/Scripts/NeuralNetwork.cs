@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-public class NeuralNetwork : IComparable<NeuralNetwork>
+public class NeuralNetwork
 {
     private Neuron[] _inputLayer;
     private Neuron[][] _hiddenLayers;
