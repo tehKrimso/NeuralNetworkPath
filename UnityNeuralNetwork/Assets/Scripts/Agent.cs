@@ -18,7 +18,7 @@ public class Agent : MonoBehaviour
     private List<GameObject> _checkpointList = new List<GameObject>();
     private void DrawLidar()
     {
-        for (int i = 0; i < 8; i++) //draws five debug rays as inputs
+        for (int i = 0; i < 8; i++) //draws debug rays as inputs
         {
             Vector3 newVector =
                 Quaternion.AngleAxis(i * 45 - 90, new Vector3(0, 1, 0)) *
@@ -49,7 +49,7 @@ public class Agent : MonoBehaviour
         {
             _checkpointList.Add(other.gameObject);
             
-            //костыль
+            //
             if(other.gameObject.name == "CheckPoint (43)" && _checkpointList.Count > 43)
                 _checkpointList.Clear();
             //
@@ -62,23 +62,6 @@ public class Agent : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         collided = true;
-        // if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Checkpoint")) //check if the car passes a gate
-        // {
-        //     GameObject[] checkPoints = GameObject.FindGameObjectsWithTag("Checkpoint");
-        //     for (int i = 0; i < checkPoints.Length; i++)
-        //     {
-        //         if (collision.collider.gameObject == checkPoints[i] &&
-        //             i == (position + 1 + checkPoints.Length) % checkPoints.Length)
-        //         {
-        //             position++; //if the gate is one ahead of it, it increments the position, which is used for the fitness/performance of the network
-        //             break;
-        //         }
-        //     }
-        // }
-        // else if (collision.collider.gameObject.layer != LayerMask.NameToLayer("Agent"))
-        // {
-        //     collided = true; //stop operation if car has collided
-        // }
     }
 
     public int GetScore()
@@ -86,19 +69,19 @@ public class Agent : MonoBehaviour
         return position;
     }
 
-    public float[] GetSensorData() //Прописать метод
+    public float[] GetSensorData() 
     {
         DrawLidar();
         return input;
     }
 
-    public void SetMoveValues(float linearMove, float angularMove)//прописать метод
+    public void SetMoveValues(float linearMove, float angularMove)
     {
         if (collided)
             return;
 
 
-        transform.Rotate(0, angularMove * rotation, 0, Space.World); //controls movement
-        transform.position += -transform.forward * linearMove * speed; //controls turning
+        transform.Rotate(0, angularMove * rotation, 0, Space.World); //controls rotation
+        transform.position += -transform.forward * linearMove * speed; //controls linear movement
     }
 }

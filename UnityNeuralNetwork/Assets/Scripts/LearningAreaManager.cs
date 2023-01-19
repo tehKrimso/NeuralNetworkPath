@@ -57,8 +57,6 @@ public class LearningAreaManager : MonoBehaviour
         {
             int agentScore = _agents[i].GetScore();
 
-            //score += agentScore;
-
             if (agentScore > score)
             {
                 score = agentScore;
@@ -88,10 +86,6 @@ public class LearningAreaManager : MonoBehaviour
         //отправка выходных значений агентам
         for (int i = 0; i < _outputs.Length; i += 2)
         {
-            // for (int j = 0; j < _agents.Count; j++)
-            // {
-            //     _agents[j].SetMoveValues(_outputs[i], _outputs[i + 1]);//движение агентов вызывать отсюда же
-            // }
             _agents[i / 2].SetMoveValues(_outputs[i], _outputs[i + 1]);
         }
         //

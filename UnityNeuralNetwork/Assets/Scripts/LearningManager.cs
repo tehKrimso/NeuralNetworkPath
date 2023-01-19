@@ -96,7 +96,6 @@ public class LearningManager : MonoBehaviour
         }
         
         
-        //_inputNeuronsCount = AgentsInGroupCount * 5;
         _inputNeuronsCount = AgentsInGroupCount * 8;
         _outputNeuronCount = AgentsInGroupCount * 2;
 
@@ -123,23 +122,8 @@ public class LearningManager : MonoBehaviour
         //
         
         StartIteration();
-        
-        //InvokeRepeating("Test", 0.1f, IterationTime);
+       
 
-    }
-
-    private void Test()
-    {
-        EndLearningIteration();
-        
-        _iterationCount++;
-        Debug.Log($"Iteration #{_iterationCount} started.");
-        
-        foreach (LearningAreaManager areaManager in _areaManagers)
-        {
-            areaManager.SpawnAgents();
-            areaManager.StartLearning();
-        }
     }
 
     private void Update()
@@ -192,7 +176,6 @@ public class LearningManager : MonoBehaviour
         //скрещиваю две лучших
         for (int i = 0; i < _neuralNetworks.Count; i++)
         {
-            //_neuralNetworks[i] = new NeuralNetwork(bestNetwork, secondBestNetwork);
             _neuralNetworks[i] = CrossNetworks(bestNetwork, bestNetwork);
         }
 
@@ -206,11 +189,7 @@ public class LearningManager : MonoBehaviour
         {
             _areaManagers[i].Construct(_neuralNetworks[i], AgentPrefab,AgentsInGroupCount);
         }
-        
-        // foreach (LearningAreaManager areaManager in _areaManagers)
-        // {
-        //     areaManager.CleanUp();
-        // }
+       
 
         _timer = 0;
         Debug.Log($"Iteration #{_iterationCount} ended.");

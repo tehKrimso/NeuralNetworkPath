@@ -83,6 +83,7 @@ public class NeuralNetwork
         //
     }
 
+    //outdated
     //crossingover constructor
     public NeuralNetwork(NeuralNetwork first, NeuralNetwork second)
     {
@@ -114,6 +115,7 @@ public class NeuralNetwork
         }
     }
 
+    //outdated
     public void TrainingLoop()
     {
         
@@ -124,7 +126,6 @@ public class NeuralNetwork
 
     public void FeedForward(float[] inputs)
     {
-        //выставлять значение напрявую в активацию, чтобы не пропускат ьинпуты через сигмоид???
         for (int i = 0; i < inputs.Length; i++)
         {
             _layers[0][i].SetValue(inputs[i]);
@@ -213,7 +214,7 @@ public class NeuralNetwork
             }
         }
 
-        //отклонения
+        //смещения
         foreach (Neuron[] layer in _layers)
         {
             foreach (Neuron neuron in layer)
