@@ -31,11 +31,11 @@ public class Agent : MonoBehaviour
             
             if (Physics.Raycast(Ray, out hit, raycastDistance, raycastMask))
             {
-                input[i] = (raycastDistance - hit.distance) / raycastDistance; //return distance, 1 being close
+                input[i] = (raycastDistance - hit.distance) / raycastDistance;
             }
             else
             {
-                input[i] = 0; //if nothing is detected, will return 0 to network
+                input[i] = 0;
             }
             
             //

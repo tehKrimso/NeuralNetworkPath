@@ -8,9 +8,8 @@ public class NeuralNetwork
     private Neuron[][] _hiddenLayers;
     private Neuron[] _outputLayer;
     private float[] _newBiases;
-    public float Fitness = 0; //fitness
+    public float Fitness = 0;
 
-    //сделать слои не тремя массивами а List<Neuron[]>?
     //
     private List<Neuron[]> _layers = new List<Neuron[]>();
     
@@ -33,7 +32,6 @@ public class NeuralNetwork
         for (int i = 0; i < inputCount; i++)
         {
             inputLayer[i] = new Neuron();
-            //inputLayer[i].SetWeight(1); //1 так как в инпуте нет весов для перемножения
             inputLayer[i].SetBias(UnityEngine.Random.Range(-initialBiasesValue, initialBiasesValue));
         }
 
@@ -47,7 +45,6 @@ public class NeuralNetwork
             for (int j = 0; j < hiddenLayerNeuronsCount; j++)
             {
                 hiddenLayer[j] = new Neuron();
-                //hiddenLayer[j].SetWeight(UnityEngine.Random.Range(-initialWeightsValue,initialWeightsValue));
                 hiddenLayer[j].SetBias(UnityEngine.Random.Range(-initialBiasesValue, initialBiasesValue));
             }
 
@@ -61,7 +58,6 @@ public class NeuralNetwork
         for (int i = 0; i < outputCount; i++)
         {
             outputLayer[i] = new Neuron();
-            //outputLayer[i].SetWeight(UnityEngine.Random.Range(-initialWeightsValue,initialWeightsValue));
             outputLayer[i].SetBias(UnityEngine.Random.Range(-initialBiasesValue, initialBiasesValue));
         }
 
@@ -82,12 +78,6 @@ public class NeuralNetwork
                     _layers[i+1][k].AddInput(_layers[i][j]);
                     weights[i][j][k] = UnityEngine.Random.Range(-initialWeightsValue, initialWeightsValue);
                 }
-                
-                // foreach (Neuron nextLayerNeuron in _layers[i+1])
-                // {
-                //     _layers[i][j].AddOutput(nextLayerNeuron);
-                //     nextLayerNeuron.AddInput(_layers[i][j]);
-                // }
             }
         }
         //
@@ -140,10 +130,6 @@ public class NeuralNetwork
             _layers[0][i].SetValue(inputs[i]);
         }
         
-        //для каждого нейрона я беру его значение, домножаю на j-ый вес в связи и отправляю в следующий нейрон
-        //или каждый нейрон проходит по своим аутпутам и забирает из них value*weight, и полученную сумму пропускает через активацию
-        
-        //это можно заменить рекурсией?
         for (int i = 1; i < _layers.Count; i++) //каждый слой начиная с 1 скрытого
         {
             for (int j = 0; j < _layers[i].Length; j++) //каждый нейрон в текущем слое
@@ -151,13 +137,11 @@ public class NeuralNetwork
                 float feedforwardValue = 0;
                 for (int k = 0; k < _layers[i - 1].Length; k++)//каждый нейрон в предыдущем слое
                 {
-                    //feedforwardValue += _layers[i - 1][k].GetActivationValue() * _weights[i - 1][k][j];
                     feedforwardValue += _layers[i - 1][k].GetValue() * weights[i - 1][k][j];
                 }
 
                 float activationValue = _layers[i][j].Activation(feedforwardValue + _layers[i][j].GetBias());
                 
-                //_layers[i][j].SetValue(feedforwardValue);
                 _layers[i][j].SetValue(activationValue);
             }
         }
@@ -170,7 +154,6 @@ public class NeuralNetwork
         
         for (int i = 0; i < outputs.Length; i++)
         {
-            //outputs[i] = _layers[_layers.Count - 1][i].GetActivationValue();
             outputs[i] = _layers[_layers.Count - 1][i].GetValue();
         }
 
@@ -186,7 +169,6 @@ public class NeuralNetwork
             {
                 for (int k = 0; k < weights[i][j].Length; k++)
                 {
-                    //переписать на проверку с ифом
                     weights[i][j][k] = (UnityEngine.Random.Range(0f, 1f) <= mutationChance)
                         ? weights[i][j][k] += UnityEngine.Random.Range(-mutationStrength, mutationStrength)
                         : weights[i][j][k];
